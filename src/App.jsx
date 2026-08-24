@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import WelcomePage from "./pages/WelcomePage";
@@ -34,49 +34,19 @@ function Cursor() {
   );
 }
 
-function App() {
+function DashboardCursor() {
+  const { pathname } = useLocation();
+  const isPublic =
+    pathname === "/" ||
+    pathname === "/home" ||
+    pathname === "/login" ||
+    pathname === "/register";
+
+  if (isPublic) return null;
+
   return (
-    <BrowserRouter>
+    <>
       <Cursor />
-
-      <Routes>
-        <Route path="/" element={<WelcomePage />} />
-        <Route path="/home" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-
-        <Route path="/resident/pay/:billId" element={<PayBill />} />
-
-        <Route
-          path="/super-admin/dashboard"
-          element={
-            <ProtectedRoute allowedRole="SUPER_ADMIN">
-              <SuperAdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/commercial/dashboard"
-          element={
-            <ProtectedRoute allowedRole="COMMERCIAL_ADMIN">
-              <CommercialAdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/resident/dashboard"
-          element={
-            <ProtectedRoute allowedRole="RESIDENT">
-              <ResidentDashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-
       <style>{`
         * {
           cursor: none;
@@ -130,6 +100,52 @@ function App() {
           }
         }
       `}</style>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <DashboardCursor />
+
+      <Routes>
+        <Route path="/" element={<WelcomePage />} />
+        <Route path="/home" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        <Route path="/resident/pay/:billId" element={<PayBill />} />
+
+        <Route
+          path="/super-admin/dashboard"
+          element={
+            <ProtectedRoute allowedRole="SUPER_ADMIN">
+              <SuperAdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/commercial/dashboard"
+          element={
+            <ProtectedRoute allowedRole="COMMERCIAL_ADMIN">
+              <CommercialAdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/resident/dashboard"
+          element={
+            <ProtectedRoute allowedRole="RESIDENT">
+              <ResidentDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </BrowserRouter>
   );
 }

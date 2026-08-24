@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser } from '../Api/apiClient';
+import AuthLayout from '../components/public/AuthLayout';
+import FormField from '../components/public/FormField';
+import { IconEye, IconEyeOff } from '../components/public/icons';
 
 const ROLES = [
   { key: 'SUPER_ADMIN', label: 'Super Admin' },
@@ -20,6 +23,7 @@ export default function Login() {
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setForm({
@@ -79,150 +83,78 @@ export default function Login() {
   };
 
   return (
-    <div className="login-page">
+    <AuthLayout kicker="Sign in" title="Welcome back.">
+      <p className="pub-auth-note" style={{ marginTop: 0, marginBottom: 18, textAlign: 'left' }}>
+        Choose the workspace you use, then enter the same credentials as before.
+      </p>
 
-      {/* Decorative animated background layers */}
-
-      <div className="login-glow-drop">
-        💧
-      </div>
-
-      <div className="water-bars">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div
-            key={i}
-            className="water-bar"
-          ></div>
-        ))}
-      </div>
-
-      <div className="welcome-bubbles">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <span
-            key={i}
-            className={`bubble bubble-${i % 6}`}
-          ></span>
-        ))}
-      </div>
-
-      <div className="welcome-waves">
-
-        <svg
-          className="wave wave-back"
-          viewBox="0 0 1440 200"
-          preserveAspectRatio="none"
-        >
-          <path d="M0,100 C360,180 1080,20 1440,100 L1440,200 L0,200 Z" />
-        </svg>
-
-        <svg
-          className="wave wave-mid"
-          viewBox="0 0 1440 200"
-          preserveAspectRatio="none"
-        >
-          <path d="M0,120 C400,40 1040,180 1440,80 L1440,200 L0,200 Z" />
-        </svg>
-
-        <svg
-          className="wave wave-front"
-          viewBox="0 0 1440 200"
-          preserveAspectRatio="none"
-        >
-          <path d="M0,140 C480,60 960,160 1440,100 L1440,200 L0,200 Z" />
-        </svg>
-
-      </div>
-
-      {/* Actual login card */}
-
-      <div className="login-glass-card">
-
-        <div className="login-logo-row">
-          💧 AquaLedger
-        </div>
-
-        <h1>Welcome back</h1>
-
-        <p className="sub">
-          Select your role, then enter your credentials to continue.
-        </p>
-
-        <div className="role-select">
-
-          {ROLES.map((r) => (
-            <button
-              key={r.key}
-              type="button"
-              className={role === r.key ? 'active' : ''}
-              onClick={() => setRole(r.key)}
-            >
-              {r.label}
-            </button>
-          ))}
-
-        </div>
-
-        {error && (
-          <div className="banner banner-error">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-
-          <div className="form-group">
-
-            <label>Email address</label>
-
-            <input
-              type="email"
-              name="email"
-              placeholder="you@example.com"
-              value={form.email}
-              onChange={handleChange}
-              required
-            />
-
-          </div>
-
-          <div className="form-group">
-
-            <label>Password</label>
-
-            <input
-              type="password"
-              name="password"
-              placeholder="••••••••"
-              value={form.password}
-              onChange={handleChange}
-              required
-            />
-
-          </div>
-
+      <div className="pub-role-switch">
+        {ROLES.map((r) => (
           <button
-            type="submit"
-            className="btn btn-fill btn-block"
-            disabled={loading}
+            key={r.key}
+            type="button"
+            className={role === r.key ? 'is-active' : ''}
+            onClick={() => setRole(r.key)}
           >
-            {loading ? 'Signing in…' : 'Log in'}
+            {r.label}
           </button>
-
-        </form>
-
-        {/* Register link ONLY for Commercial Admin */}
-
-        {role === 'COMMERCIAL_ADMIN' && (
-          <div className="auth-foot-link">
-            Don't have an account?{' '}
-            <Link to="/register">
-              Register here
-            </Link>
-          </div>
-        )}
-
+        ))}
       </div>
 
-    </div>
+      {error && (
+        <div className="pub-alert pub-alert-error" role="alert">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <FormField
+          label="Email address"
+          name="email"
+          type="email"
+          placeholder="you@example.com"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+
+        <FormField
+          label="Password"
+          name="password"
+          type={showPassword ? 'text' : 'password'}
+          placeholder="••••••••"
+          value={form.password}
+          onChange={handleChange}
+          required
+          trailing={
+            <button
+              type="button"
+              className="pub-eye"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <IconEyeOff /> : <IconEye />}
+            </button>
+          }
+        />
+
+        <button
+          type="submit"
+          className="pub-btn pub-btn-primary pub-btn-block"
+          disabled={loading}
+        >
+          {loading ? 'Signing in…' : 'Log in'}
+        </button>
+      </form>
+
+      {role === 'COMMERCIAL_ADMIN' && (
+        <div className="pub-auth-note">
+          Don't have an account?{' '}
+          <Link to="/register">
+            Register here
+          </Link>
+        </div>
+      )}
+    </AuthLayout>
   );
 }

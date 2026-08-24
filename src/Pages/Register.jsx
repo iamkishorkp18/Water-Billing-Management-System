@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../Api/apiClient';
+import AuthLayout from '../components/public/AuthLayout';
+import FormField from '../components/public/FormField';
+import { IconEye, IconEyeOff } from '../components/public/icons';
 
 const ROLES = [
   { key: 'COMMERCIAL_ADMIN', label: 'Commercial' },
@@ -29,6 +32,7 @@ export default function Register() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -93,113 +97,124 @@ export default function Register() {
   const copy = BRAND_COPY[role];
 
   return (
-    <div className="register-page">
-      <div className="register-hero-visual">
-        <div className="register-drop-glow">💧</div>
-        <div className="register-hands">🤲</div>
-      </div>
+    <AuthLayout kicker="Access request" title="Create an account.">
+      <p className="pub-auth-note" style={{ marginTop: 0, marginBottom: 18, textAlign: 'left' }}>
+        {copy.title} {copy.body}
+      </p>
 
-      <div className="welcome-bubbles">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <span key={i} className={`bubble bubble-${i % 6}`}></span>
+      <div className="pub-role-switch is-two">
+        {ROLES.map((r) => (
+          <button
+            key={r.key}
+            type="button"
+            className={role === r.key ? 'is-active' : ''}
+            onClick={() => setRole(r.key)}
+          >
+            {r.label}
+          </button>
         ))}
       </div>
 
-      <div className="welcome-waves">
-        <svg className="wave wave-back" viewBox="0 0 1440 200" preserveAspectRatio="none">
-          <path d="M0,100 C360,180 1080,20 1440,100 L1440,200 L0,200 Z" />
-        </svg>
-        <svg className="wave wave-mid" viewBox="0 0 1440 200" preserveAspectRatio="none">
-          <path d="M0,120 C400,40 1040,180 1440,80 L1440,200 L0,200 Z" />
-        </svg>
-        <svg className="wave wave-front" viewBox="0 0 1440 200" preserveAspectRatio="none">
-          <path d="M0,140 C480,60 960,160 1440,100 L1440,200 L0,200 Z" />
-        </svg>
-      </div>
-
-      <div style={{ position: 'relative', zIndex: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 150 }}>
-        <p className="register-quote">
-          "Every drop counts — protecting water today means securing tomorrow."
-          <span>AQUALEDGER · WATER STEWARDSHIP</span>
-        </p>
-
-        <div className="register-glass-card">
-          <div className="login-logo-row">💧 AquaLedger</div>
-          <h1>Create an account</h1>
-          <p className="sub">Choose the role that matches what you'll be doing here.</p>
-
-          <div className="role-select">
-            {ROLES.map((r) => (
-              <button
-                key={r.key}
-                type="button"
-                className={role === r.key ? 'active' : ''}
-                onClick={() => setRole(r.key)}
-              >
-                {r.label}
-              </button>
-            ))}
+      {role === 'RESIDENT' ? (
+        <>
+          <div className="pub-alert pub-alert-info">
+            Residents log in with credentials issued by their Commercial Admin — there's no self-registration for this role.
           </div>
-
-          {role === 'RESIDENT' ? (
-            <>
-              <div className="banner banner-info">
-                Residents log in with credentials issued by their Commercial Admin — there's no self-registration for this role.
-              </div>
-              <Link to="/login" className="btn btn-fill btn-block">Go to Login</Link>
-            </>
-          ) : (
-            <>
-              <div className="banner banner-info">
-                Commercial Admin accounts require Super Admin approval before you can log in.
-              </div>
-              {error && <div className="banner banner-error">{error}</div>}
-              {success && <div className="banner banner-success">{success}</div>}
-
-              <form onSubmit={handleSubmit}>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Full name</label>
-                    <input type="text" name="fullName" placeholder="Jane Rivera" value={form.fullName} onChange={handleChange} required />
-                  </div>
-                  <div className="form-group">
-                    <label>Age</label>
-                    <input type="number" name="age" placeholder="30" min="18" max="100" value={form.age} onChange={handleChange} required />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label>Username</label>
-                  <input type="text" name="username" placeholder="jane.rivera" value={form.username} onChange={handleChange} required />
-                </div>
-
-                <div className="form-group">
-                  <label>Email address</label>
-                  <input type="email" name="email" placeholder="you@example.com" value={form.email} onChange={handleChange} required />
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Password</label>
-                    <input type="password" name="password" placeholder="••••••••" value={form.password} onChange={handleChange} required />
-                  </div>
-                  <div className="form-group">
-                    <label>Confirm password</label>
-                    <input type="password" name="confirmPassword" placeholder="••••••••" value={form.confirmPassword} onChange={handleChange} required />
-                  </div>
-                </div>
-
-                <button type="submit" className="btn btn-fill btn-block" disabled={loading}>
-                  {loading ? 'Creating account…' : 'Submit for Approval'}
-                </button>
-              </form>
-            </>
-          )}
-
-          <div className="auth-foot-link">
-            Already have an account? <Link to="/login">Log in</Link>
+          <Link to="/login" className="pub-btn pub-btn-primary pub-btn-block">Go to Login</Link>
+        </>
+      ) : (
+        <>
+          <div className="pub-alert pub-alert-info">
+            Commercial Admin accounts require Super Admin approval before you can log in.
           </div>
-        </div>
+          {error && <div className="pub-alert pub-alert-error" role="alert">{error}</div>}
+          {success && <div className="pub-alert pub-alert-ok" role="status">{success}</div>}
+
+          <form onSubmit={handleSubmit}>
+            <p className="pub-section-label">Profile</p>
+            <div className="pub-field-row">
+              <FormField
+                label="Full name"
+                name="fullName"
+                placeholder="Jane Rivera"
+                value={form.fullName}
+                onChange={handleChange}
+                required
+              />
+              <FormField
+                label="Age"
+                name="age"
+                type="number"
+                placeholder="30"
+                min="18"
+                max="100"
+                value={form.age}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <p className="pub-section-label">Account</p>
+            <FormField
+              label="Username"
+              name="username"
+              placeholder="jane.rivera"
+              value={form.username}
+              onChange={handleChange}
+              required
+            />
+            <FormField
+              label="Email address"
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+
+            <p className="pub-section-label">Security</p>
+            <div className="pub-field-row">
+              <FormField
+                label="Password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={form.password}
+                onChange={handleChange}
+                required
+                trailing={
+                  <button
+                    type="button"
+                    className="pub-eye"
+                    onClick={() => setShowPassword((v) => !v)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <IconEyeOff /> : <IconEye />}
+                  </button>
+                }
+              />
+              <FormField
+                label="Confirm password"
+                name="confirmPassword"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <button type="submit" className="pub-btn pub-btn-primary pub-btn-block" disabled={loading}>
+              {loading ? 'Creating account…' : 'Submit for Approval'}
+            </button>
+          </form>
+        </>
+      )}
+
+      <div className="pub-auth-note">
+        Already have an account? <Link to="/login">Log in</Link>
       </div>
-    </div>
+    </AuthLayout>
   );
 }
