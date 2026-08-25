@@ -23,6 +23,7 @@ import {
   NotificationsTab,
   AlertsTab
 } from './tabs';
+import AppShell from '../../components/app/AppShell';
 
 const TABS = [
   'Dashboard',
@@ -35,23 +36,12 @@ const TABS = [
   'Profile'
 ];
 
-const ICONS = {
-  Dashboard: '📊',
-  'Water Usage': '💧',
-  Bills: '🧾',
-  Payments: '💳',
-  Notifications: '🔔',
-  Alerts: '🚨',
-  Complaints: '📮',
-  Profile: '👤'
-};
-
 const TIPS = [
-  { icon:'🚿', text:'Turn off taps while brushing your teeth to save water.' },
-  { icon:'🔧', text:'Repair leaking taps promptly to prevent water wastage.' },
-  { icon:'🪣', text:'Use a bucket instead of a shower where possible.' },
-  { icon:'🧺', text:'Run washing machines only with a full load.' },
-  { icon:'🌧️', text:'Consider rainwater harvesting to reduce water usage.' }
+  { text:'Turn off taps while brushing your teeth to save water.' },
+  { text:'Repair leaking taps promptly to prevent water wastage.' },
+  { text:'Use a bucket instead of a shower where possible.' },
+  { text:'Run washing machines only with a full load.' },
+  { text:'Consider rainwater harvesting to reduce water usage.' }
 ];
 
 export default function ResidentDashboard() {
@@ -247,82 +237,16 @@ export default function ResidentDashboard() {
   const initials = email ? email.charAt(0).toUpperCase() : 'R';
 
   return (
-    <div className="dash-shell">
-
-      <aside className="dash-sidebar">
-        <div className="nav-logo">💧 AquaLedger</div>
-
-        <nav className="dash-nav">
-          {TABS.map(tab => (
-            <div
-              key={tab}
-              className={`dash-nav-item ${
-                activeTab === tab ? 'active' : ''
-              }`}
-              onClick={() => setActiveTab(tab)}
-            >
-              <span>{ICONS[tab]}</span> {tab}
-            </div>
-          ))}
-        </nav>
-
-        <button
-          className="btn btn-outline"
-          style={{ marginTop:'auto' }}
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
-      </aside>
-
-      <main className="dash-main">
-
-        <div className="res-header">
-          <div>
-            <h1
-              style={{
-                fontSize:24,
-                fontWeight:800,
-                color:'var(--primary)'
-              }}
-            >
-              {activeTab}
-            </h1>
-
-            <p className="dash-sub">
-              {new Date().toLocaleDateString('en-IN',{
-                weekday:'long',
-                year:'numeric',
-                month:'long',
-                day:'numeric'
-              })}
-            </p>
-          </div>
-
-          <input
-            className="res-search"
-            placeholder="Search bills, alerts, tips..."
-          />
-
-          <div className="res-header-right">
-            <div className="res-bell">
-              🔔<span className="dot" />
-            </div>
-
-            <div className="res-avatar">{initials}</div>
-          </div>
-        </div>
-
-        {error && (
-          <div className="banner banner-error">
-            {error}
-          </div>
-        )}
-
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
-          <>
+    <AppShell
+      roleLabel="Resident"
+      email={email}
+      tabs={TABS}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      onLogout={handleLogout}
+      error={error}
+      loading={loading}
+    >
             {activeTab === 'Dashboard' && (
               <ResidentOverviewTab
                 latestBill={latestBill}
@@ -379,10 +303,7 @@ export default function ResidentDashboard() {
             {activeTab === 'Profile' && (
               <ProfileTab email={email} />
             )}
-          </>
-        )}
-      </main>
-    </div>
+    </AppShell>
   );
 }
 

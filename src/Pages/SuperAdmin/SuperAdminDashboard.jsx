@@ -20,9 +20,8 @@ import {
   getAllComplaints
 } from '../../Api/analyticsApi';
 
-import { deleteCommercialAdmin } from '../../Api/apiClient';
-//import { TrashTab } from '../TrashTab';
 import TrashTab from '../TrashTab';
+import AppShell from '../../components/app/AppShell';
 
 import SuperAdminOverviewTab from './tabs/SuperAdminOverviewTab';
 import UsageLogsTab from './tabs/UsageLogsTab';
@@ -36,24 +35,6 @@ import ReportsTab from './tabs/ReportsTab';
 import CommercialAdminsTab from './tabs/CommercialAdminsTab';
 import ResidentsTab from './tabs/ResidentsTab';
 import SettingsTab from './tabs/SettingsTab';
-
-const icons = {
-  Overview: '📊',
-  'Usage Logs': '💧',
-  'Billing Cycle': '🧾',
-  Payments: '💳',
-  'Alert Center': '🚨',
-  Invoices: '📄',
-  Complaints: '📢',
-  'Tariff Plans': '💰',
-  Reports: '📈',
-  'Commercial Admins': '👨‍💼',
-  Residents: '👥',
-  Settings: '⚙️',
-  Trash: '🗑️'
-};
-
-const tabIcon = (tab) => icons[tab] || '📌';
 
 const TABS = [
   'Overview',
@@ -311,67 +292,16 @@ export default function SuperAdminDashboard() {
     }));
 
   return (
-    <div className="dash-shell">
-
-      <aside className="dash-sidebar">
-
-        <div
-          className="nav-logo"
-          style={{
-            color: 'white',
-            padding: '0 0 24px'
-          }}
-        >
-          💧 AquaLedger
-        </div>
-
-        <nav className="dash-nav">
-
-          {TABS.map((tab) => (
-            <div
-              key={tab}
-              className={`dash-nav-item ${
-                activeTab === tab
-                  ? 'active'
-                  : ''
-              }`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tabIcon(tab)} {tab}
-            </div>
-          ))}
-
-        </nav>
-
-        <button
-          className="btn btn-outline"
-          style={{ marginTop: 'auto' }}
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
-
-      </aside>
-
-      <main className="dash-main">
-
-        <div className="dash-topbar">
-          <h1>{activeTab}</h1>
-
-          <p className="dash-sub">
-            Welcome back, {email}
-          </p>
-        </div>
-
-        {error && (
-          <div className="banner banner-error">
-            {error}
-          </div>
-        )}
-
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
+    <AppShell
+      roleLabel="Super Admin"
+      email={email}
+      tabs={TABS}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      onLogout={handleLogout}
+      error={error}
+      loading={loading}
+    >
           <>
 
             {/* OVERVIEW */}
@@ -383,6 +313,9 @@ export default function SuperAdminDashboard() {
                 totalPendingAmount={totalPendingAmount}
                 apartmentUsageChart={apartmentUsageChart}
                 billStatusChart={billStatusChart}
+                billsCount={allBills.length}
+                usageCount={allUsage.length}
+                complaintsCount={allComplaints.length}
               />
             )}
 
@@ -496,9 +429,6 @@ export default function SuperAdminDashboard() {
            {activeTab === 'Trash' && <TrashTab />}
 
           </>
-        )}
-
-      </main>
-    </div>
+    </AppShell>
   );
 }

@@ -1,0 +1,670 @@
+.app-root {
+  --ink: #1c1814;
+  --muted: #6a6258;
+  --mist: #f3efe6;
+  --deep: #211d19;
+  --teal: #9a3412;
+  --mint: #c2410c;
+  --line: #ddd4c6;
+  --danger: #9f1239;
+  --success: #166534;
+  --warning: #9a3412;
+  --shadow: 0 18px 40px rgba(33, 29, 25, 0.08);
+  --radius: 16px;
+  --paper: #fffaf1;
+  --copper: #9a3412;
+  --charcoal: #211d19;
+  display: flex;
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--mist);
+  font-family: Figtree, "Segoe UI", sans-serif;
+}
+
+.app-root *,
+.app-root *::before,
+.app-root *::after {
+  box-sizing: border-box;
+}
+
+.app-root h1,
+.app-root h2,
+.app-root h3,
+.app-root h4 {
+  font-family: Fraunces, Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.app-sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  flex: 0 0 248px;
+  flex-direction: column;
+  height: 100vh;
+  padding: 22px 14px;
+  color: #f6f0e6;
+  background:
+    linear-gradient(180deg, rgba(33, 29, 25, 0.12), rgba(33, 29, 25, 0.42)),
+    repeating-linear-gradient(-12deg, #2a241f 0 14px, #211d19 14px 28px);
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 18px;
+}
+
+.app-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: var(--charcoal);
+  background: #fffaf1;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.app-brand strong,
+.app-brand em {
+  display: block;
+  line-height: 1.15;
+}
+
+.app-brand em {
+  color: rgba(246, 240, 230, 0.68);
+  font-size: 11px;
+  font-style: normal;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.app-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: auto;
+}
+
+.app-nav-item,
+.app-logout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  color: rgba(246, 240, 230, 0.78);
+  background: transparent;
+  font: inherit;
+  font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+}
+
+.app-nav-item:hover,
+.app-nav-item.is-active,
+.app-logout:hover {
+  color: #fffaf1;
+  background: rgba(255, 250, 241, 0.1);
+}
+
+.app-logout {
+  margin-top: auto;
+  border: 1px solid rgba(246, 240, 230, 0.18);
+}
+
+.app-sidebar-close {
+  display: none;
+  margin-left: auto;
+}
+
+.app-backdrop {
+  display: none;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 28px;
+  background: rgba(243, 239, 230, 0.94);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.app-kicker {
+  margin: 0 0 4px;
+  color: var(--copper);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.app-header-left,
+.app-header-right,
+.app-modal-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-menu-btn {
+  display: none;
+}
+
+.app-email {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.app-role-chip,
+.app-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.app-role-chip {
+  color: #fffaf1;
+  background: var(--charcoal);
+}
+
+.app-avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #fffaf1;
+  background: var(--copper);
+  font-weight: 700;
+}
+
+.app-content {
+  padding: 24px 28px 48px;
+  animation: appReveal 0.45s ease both;
+}
+
+.app-loading,
+.app-empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 40px 16px;
+}
+
+.app-alert {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.app-alert-error {
+  color: #9f1239;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+}
+
+.app-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.app-icon-btn.is-light {
+  color: #fffaf1;
+  background: rgba(255, 250, 241, 0.14);
+  border-color: rgba(255, 250, 241, 0.35);
+}
+
+.app-root .stat-cards,
+.app-root .bill-summary-grid,
+.app-root .payment-stat-grid,
+.app-root .notification-summary,
+.app-root .sa-billing-summary,
+.app-root .complaint-stat-grid,
+.app-root .invoice-summary-bar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.app-root .stat-card,
+.app-root .bill-summary-card,
+.app-root .payment-stat-card,
+.app-root .summary-card,
+.app-root .sa-summary-card,
+.app-root .dash-section,
+.app-root .feature-card,
+.app-root .pub-card,
+.app-root .expandable-card,
+.app-root .sa-billing-section,
+.app-root .billing-section,
+.app-root .complaint-panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.app-root .stat-card,
+.app-root .bill-summary-card,
+.app-root .sa-summary-card {
+  padding: 20px;
+}
+
+.app-root .stat-card:hover,
+.app-root .bill-summary-card:hover,
+.app-root .sa-summary-card:hover {
+  transform: none;
+  box-shadow: var(--shadow);
+}
+
+.app-root .stat-card-val,
+.app-root .bill-summary-value,
+.app-root .sa-summary-card strong {
+  color: var(--charcoal);
+  font: 700 26px Fraunces, Georgia, serif;
+}
+
+.app-root .stat-card-lbl,
+.app-root .bill-summary-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.app-root .stat-card-icon,
+.app-root .billing-title-icon,
+.app-root .feature-card .icon {
+  color: var(--copper);
+  background: #f6e7dc;
+}
+
+.app-root .dash-section {
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+.app-root .dash-section-head h2,
+.app-root .billing-title-row h2 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.app-root .btn,
+.app-root .btn-sm,
+.app-root .btn-fill,
+.app-root .bill-view-btn,
+.app-root .bill-pay-btn,
+.app-root .quick-action-btn,
+.app-root .filter-btn,
+.app-root .bulk-primary-btn,
+.app-root .calculate-bill-btn {
+  border-radius: 8px;
+}
+
+.app-root .btn-fill,
+.app-root .btn-danger,
+.app-root .confirm-payment-btn,
+.app-root .bulk-primary-btn,
+.app-root .calculate-bill-btn,
+.app-root .save-purchase-btn {
+  color: #fffaf1;
+  background: var(--copper);
+  box-shadow: none;
+}
+
+.app-root .btn-fill:hover,
+.app-root .bulk-primary-btn:hover {
+  background: #7c2d12;
+  transform: none;
+}
+
+.app-root .btn-outline {
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--line);
+}
+
+.app-root .btn-approve,
+.app-root .badge-success,
+.app-root .bill-status-paid,
+.app-root .app-badge-ok {
+  color: var(--success);
+  background: #f0fdf4;
+}
+
+.app-root .btn-reject,
+.app-root .badge-danger,
+.app-root .app-badge-bad,
+.app-root .bill-status-overdue {
+  color: var(--danger);
+  background: #fff1f2;
+}
+
+.app-root .badge-warning,
+.app-root .bill-status-pending,
+.app-root .app-badge-warn {
+  color: #9a3412;
+  background: #fff7ed;
+}
+
+.app-root .app-badge-neutral {
+  color: var(--muted);
+  background: #f3efe6;
+}
+
+.app-root input,
+.app-root select,
+.app-root textarea {
+  border-color: var(--line);
+  background: #fff;
+  border-radius: 8px;
+}
+
+.app-root input:focus,
+.app-root select:focus,
+.app-root textarea:focus {
+  border-color: #c2410c;
+  box-shadow: none;
+  outline: 2px solid #c2410c;
+  outline-offset: 1px;
+}
+
+.app-root .data-table,
+.app-root .bill-table,
+.app-root .payments-table,
+.app-root .invoice-table {
+  width: 100%;
+}
+
+.app-root .data-table th,
+.app-root .bill-table th,
+.app-root .payments-table th,
+.app-root .invoice-table th {
+  color: var(--muted);
+  background: #efe9de;
+}
+
+.app-root .data-table tbody tr:hover,
+.app-root .bill-table tbody tr:hover {
+  background: #f7f1e6;
+}
+
+.app-root .sa-billing-table-wrapper,
+.app-root .bill-table-wrapper,
+.app-root .complaint-table-wrapper,
+.app-root .invoice-table-wrapper,
+.app-root .payments-table-wrapper,
+.app-table-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.app-root .chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.app-root .quick-actions-row,
+.app-root .billing-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.app-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(33, 29, 25, 0.62);
+}
+
+.app-modal {
+  width: min(840px, 100%);
+  max-height: 92vh;
+  overflow: auto;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.app-modal-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px;
+  color: #fffaf1;
+  background: var(--charcoal);
+}
+
+.app-modal-head h2,
+.app-modal-head p,
+.app-modal-head .app-kicker {
+  color: #fffaf1;
+}
+
+.app-modal-head p,
+.app-modal-head .app-kicker {
+  opacity: 0.78;
+}
+
+.app-modal-body {
+  padding: 22px 24px;
+}
+
+.app-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0 24px 22px;
+}
+
+.app-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.app-detail-item,
+.app-section-block {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.app-detail-item span,
+.app-section-block .lbl {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.app-detail-item strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--charcoal);
+}
+
+.app-section-title {
+  margin: 18px 0 10px;
+  font-size: 18px;
+}
+
+.app-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--copper);
+  background: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.app-pay-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--mist);
+  font-family: Figtree, "Segoe UI", sans-serif;
+}
+
+.app-pay-card {
+  width: min(460px, 100%);
+  padding: 28px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.app-pay-card h1 {
+  font-family: Fraunces, Georgia, serif;
+  margin: 0 0 8px;
+}
+
+.app-pay-card p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+@keyframes appReveal {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1024px) {
+  .app-root .stat-cards,
+  .app-root .bill-summary-grid,
+  .app-root .sa-billing-summary,
+  .app-root .complaint-stat-grid,
+  .app-root .invoice-summary-bar,
+  .app-detail-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .app-root .chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .app-sidebar {
+    position: fixed;
+    left: 0;
+    transform: translateX(-105%);
+    transition: transform 0.2s ease;
+  }
+
+  .app-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .app-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 25;
+    border: 0;
+    background: rgba(33, 29, 25, 0.45);
+  }
+
+  .app-menu-btn,
+  .app-sidebar-close {
+    display: grid;
+  }
+
+  .app-header,
+  .app-content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .app-email {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-root .stat-cards,
+  .app-root .bill-summary-grid,
+  .app-root .sa-billing-summary,
+  .app-root .complaint-stat-grid,
+  .app-root .invoice-summary-bar,
+  .app-detail-grid,
+  .app-root .form-row,
+  .app-root .form-row-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .app-header,
+  .app-header-right {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .app-header h1 {
+    font-size: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-content,
+  .app-sidebar {
+    animation: none;
+    transition: none;
+  }
+}

@@ -8,7 +8,8 @@ import {
   getBillsForApartment,
   getComplaintsForApartment,
   createComplaint,
-  updateComplaintStatus
+  updateComplaintStatus,
+  markBillAsPaid
 } from "../../Api/commercialApi";
 
 import OverviewTab from "./tabs/OverviewTab";
@@ -22,6 +23,7 @@ import NotificationsTab from "./tabs/NotificationsTab";
 
 // ================= EXISTING BULK PURCHASE COMPONENT =================
 import BulkPurchasesTab from "../../components/BulkPurchasesTab";
+import AppShell from "../../components/app/AppShell";
 
 
 // ================= TABS =================
@@ -305,179 +307,36 @@ export default function CommercialAdminDashboard() {
   // ================= RENDER =================
 
   return (
-    <div className="dash-shell">
-
-
-      {/* =====================================================
-          SIDEBAR
-      ===================================================== */}
-
-      <aside className="dash-sidebar">
-
-        <div
-          className="nav-logo"
-          style={{
-            color: 'white',
-            padding: '0 0 24px'
-          }}
-        >
-          💧 AquaLedger
-        </div>
-
-
-        <nav className="dash-nav">
-
-          {TABS.map(tab => (
-
-            <div
-              key={tab}
-              className={`dash-nav-item ${
-                activeTab === tab
-                  ? 'active'
-                  : ''
-              }`}
-              onClick={() =>
-                setActiveTab(tab)
-              }
-            >
-
-              {tabIcon(tab)}
-
-              {' '}
-
-              {tab}
-
-            </div>
-
-          ))}
-
-        </nav>
-
-
-        <button
-          className="btn btn-outline"
-          style={{
-            marginTop: 'auto'
-          }}
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
-
-      </aside>
-
-
-      {/* =====================================================
-          MAIN CONTENT
-      ===================================================== */}
-
-      <main className="dash-main">
-
-
-        {/* =====================================================
-            HEADER
-        ===================================================== */}
-
-        <div className="ca-header">
-
-          <div className="ca-header-left">
-
-            <h1>
-              {currentApt?.name ||
-                'Commercial Admin'}
-            </h1>
-
-
-            <p>
-
-              {email}
-
-              {' · '}
-
-              {new Date().toLocaleDateString(
-                'en-IN',
-                {
-                  weekday: 'long',
-                  day: 'numeric',
-                  month: 'long'
-                }
-              )}
-
-            </p>
-
-          </div>
-
-
-          <div className="ca-header-right">
-
-            <select
-              value={selectedApt || ''}
-              onChange={e =>
-                setSelectedApt(
-                  Number(e.target.value)
-                )
-              }
-              style={{
-                padding: '9px 14px',
-                borderRadius: 10,
-                border:
-                  '1.5px solid #e2e8f0'
-              }}
-            >
-
-              {apartments.map(a => (
-
-                <option
-                  key={a.id}
-                  value={a.id}
-                >
-                  {a.name}
-                </option>
-
-              ))}
-
-            </select>
-
-          </div>
-
-        </div>
-
-
-        {/* =====================================================
-            ERROR MESSAGE
-        ===================================================== */}
-
-        {error && (
-
-          <div className="banner banner-error">
-
-            {error}
-
-          </div>
-
-        )}
-
-
-        {/* =====================================================
-            NO APARTMENTS
-        ===================================================== */}
-
-        {apartments.length === 0 &&
-        !loading ? (
-
+    <AppShell
+      roleLabel="Community Admin"
+      email={email}
+      tabs={TABS}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      onLogout={handleLogout}
+      error={error}
+      loading={loading}
+      headerExtra={
+        apartments.length ? (
+          <select
+            aria-label="Select apartment"
+            value={selectedApt || ''}
+            onChange={e => setSelectedApt(Number(e.target.value))}
+          >
+            {apartments.map(a => (
+              <option key={a.id} value={a.id}>
+                {a.name}
+              </option>
+            ))}
+          </select>
+        ) : null
+      }
+    >
+        {apartments.length === 0 && !loading ? (
           <p className="empty-state">
-
-            No apartments assigned to you
-            yet. Contact the Super Admin.
-
+            No apartments assigned to you yet. Contact the Super Admin.
           </p>
-
-        ) : loading ? (
-
-          <p>Loading...</p>
-
-        ) : (
-
+        ) : !loading ? (
           <>
 
 
@@ -665,42 +524,7 @@ export default function CommercialAdminDashboard() {
             )}
 
           </>
-
-        )}
-
-      </main>
-
-    </div>
+        ) : null}
+    </AppShell>
   );
-}
-
-
-// =============================================================
-// TAB ICONS
-// =============================================================
-
-function tabIcon(tab) {
-
-  const icons = {
-
-    Overview: '📊',
-
-    Households: '🏢',
-
-    Residents: '🏠',
-
-    'Billing Cycle': '🧾',
-
-    'Generate Bill': '💵',
-
-    'Bulk Purchases': '🚛',
-
-    Complaints: '📮',
-
-    Notifications: '🔔'
-
-  };
-
-
-  return icons[tab] || '•';
 }

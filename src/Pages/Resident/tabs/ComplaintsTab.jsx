@@ -133,6 +133,7 @@ export default function ComplaintsTab() {
               <th>Description</th>
               <th>Date</th>
               <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
 
@@ -140,7 +141,7 @@ export default function ComplaintsTab() {
             {complaints.length === 0 ? (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={5}
                   className="empty-state"
                 >
                   No complaints raised yet.
@@ -167,6 +168,11 @@ export default function ComplaintsTab() {
                     <span className="badge badge-warning">
                       {c.status}
                     </span>
+                  </td>
+                  <td>
+                    <button type="button" className="app-view-btn" onClick={() => setViewComplaint(c)}>
+                      View Complaint
+                    </button>
                   </td>
                 </tr>
               ))

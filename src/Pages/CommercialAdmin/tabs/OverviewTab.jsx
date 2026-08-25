@@ -58,49 +58,43 @@ function OverviewTab({
     <>
       <div className="quick-actions-row">
         <button className="quick-action-btn" onClick={() => setActiveTab('Residents')}>
-          + Add Resident
+          Add resident
         </button>
         <button className="quick-action-btn" onClick={() => setActiveTab('Households')}>
-          + Add Household
+          Add household
         </button>
         <button className="quick-action-btn" onClick={() => setActiveTab('Generate Bill')}>
-          💵 Generate Bills
+          Generate bills
         </button>
         <button className="quick-action-btn" onClick={() => setActiveTab('Notifications')}>
-          🔔 Send Notification
+          Send notification
         </button>
       </div>
 
       <div className="stat-cards">
         <div className="stat-card">
-          <div className="stat-card-icon">🏢</div>
           <div className="stat-card-val">{households.length}</div>
-          <div className="stat-card-lbl">Total Households</div>
+          <div className="stat-card-lbl">Households</div>
         </div>
         <div className="stat-card">
-          <div className="stat-card-icon">👥</div>
           <div className="stat-card-val">{residents.length}</div>
-          <div className="stat-card-lbl">Total Residents</div>
+          <div className="stat-card-lbl">Residents</div>
         </div>
         <div className="stat-card">
-          <div className="stat-card-icon">🧾</div>
           <div className="stat-card-val">{pendingCount}</div>
-          <div className="stat-card-lbl">Pending Bills</div>
+          <div className="stat-card-lbl">Pending bills</div>
         </div>
         <div className="stat-card">
-          <div className="stat-card-icon">💰</div>
           <div className="stat-card-val">₹{pendingAmount.toFixed(0)}</div>
-          <div className="stat-card-lbl">Outstanding Amount</div>
+          <div className="stat-card-lbl">Outstanding</div>
         </div>
         <div className="stat-card">
-          <div className="stat-card-icon">✅</div>
           <div className="stat-card-val">₹{paidAmount.toFixed(0)}</div>
-          <div className="stat-card-lbl">Revenue Collected</div>
+          <div className="stat-card-lbl">Collected</div>
         </div>
         <div className="stat-card">
-          <div className="stat-card-icon">📮</div>
           <div className="stat-card-val">{openComplaints}</div>
-          <div className="stat-card-lbl">Pending Complaints</div>
+          <div className="stat-card-lbl">Open complaints</div>
         </div>
       </div>
 
@@ -116,7 +110,7 @@ function OverviewTab({
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip formatter={v => [`₹${Number(v).toFixed(2)}`, 'Revenue']} />
-                <Line type="monotone" dataKey="revenue" stroke="#22c55e" strokeWidth={2.5} />
+                <Line type="monotone" dataKey="revenue" stroke="#9a3412" strokeWidth={2.5} />
               </LineChart>
             </ResponsiveContainer>
           )}
@@ -141,7 +135,7 @@ function OverviewTab({
                   {billStatusData.map((e, i) => (
                     <Cell
                       key={i}
-                      fill={e.name === 'Paid' ? '#22c55e' : '#f59e0b'}
+                      fill={e.name === 'Paid' ? '#166534' : '#9a3412'}
                     />
                   ))}
                 </Pie>
@@ -164,7 +158,7 @@ function OverviewTab({
               <XAxis type="number" />
               <YAxis type="category" dataKey="name" />
               <Tooltip />
-              <Bar dataKey="consumption" fill="#0f4c5c">
+              <Bar dataKey="consumption" fill="#211d19">
                 <LabelList dataKey="consumption" position="right" />
               </Bar>
             </BarChart>

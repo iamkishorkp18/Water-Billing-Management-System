@@ -3,7 +3,7 @@ import {
   PieChart, Pie, Cell, LabelList, Legend
 } from 'recharts';
 
-const COLORS = ['#0f4c5c', '#14b8a6', '#5eead4', '#f59e0b', '#ef4444', '#8b5cf6'];
+const COLORS = ['#211d19', '#9a3412', '#c2410c', '#6a6258', '#ddd4c6'];
 
  function SuperAdminOverviewTab({
   apartments,
@@ -11,33 +11,52 @@ const COLORS = ['#0f4c5c', '#14b8a6', '#5eead4', '#f59e0b', '#ef4444', '#8b5cf6'
   alerts,
   totalPendingAmount,
   apartmentUsageChart,
-  billStatusChart
+  billStatusChart,
+  billsCount = 0,
+  usageCount = 0,
+  complaintsCount = 0
 }) {
   return (
     <>
       <div className="stat-cards">
         <div className="stat-card">
           <div className="stat-card-val">{apartments.length}</div>
-          <div className="stat-card-lbl">Total Apartments</div>
+          <div className="stat-card-lbl">Total apartments</div>
         </div>
         <div className="stat-card">
           <div className="stat-card-val">{pendingAdmins.length}</div>
-          <div className="stat-card-lbl">Pending Approvals</div>
+          <div className="stat-card-lbl">Pending community admins</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-val">{billsCount}</div>
+          <div className="stat-card-lbl">Bills on record</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-val">₹{Number(totalPendingAmount || 0).toFixed(2)}</div>
+          <div className="stat-card-lbl">Outstanding amount</div>
         </div>
         <div className="stat-card">
           <div className="stat-card-val">{alerts.length}</div>
-          <div className="stat-card-lbl">Active Alerts</div>
+          <div className="stat-card-lbl">Active alerts</div>
         </div>
         <div className="stat-card">
-          <div className="stat-card-val">₹{totalPendingAmount.toFixed(2)}</div>
-          <div className="stat-card-lbl">Pending Payments</div>
+          <div className="stat-card-val">{complaintsCount}</div>
+          <div className="stat-card-lbl">Complaints</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-val">{usageCount}</div>
+          <div className="stat-card-lbl">Usage readings</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-val">{pendingAdmins.length + alerts.length}</div>
+          <div className="stat-card-lbl">Pending actions</div>
         </div>
       </div>
 
       <div className="chart-grid">
         <div className="dash-section">
           <div className="dash-section-head">
-            <h2>Apartment-wise Usage</h2>
+            <h2>Apartment-wise usage</h2>
           </div>
 
           {apartmentUsageChart.length === 0 ? (
@@ -49,31 +68,31 @@ const COLORS = ['#0f4c5c', '#14b8a6', '#5eead4', '#f59e0b', '#ef4444', '#8b5cf6'
                 barCategoryGap="35%"
                 margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="#eef2f6" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#ddd4c6" vertical={false} />
                 <XAxis
                   dataKey="name"
                   fontSize={13}
-                  axisLine={{ stroke: '#1e293b', strokeWidth: 1.5 }}
-                  tickLine={{ stroke: '#1e293b' }}
+                  axisLine={{ stroke: '#211d19', strokeWidth: 1.5 }}
+                  tickLine={{ stroke: '#211d19' }}
                 />
                 <YAxis
                   domain={[0, 'dataMax']}
-                  axisLine={{ stroke: '#1e293b', strokeWidth: 1.5 }}
+                  axisLine={{ stroke: '#211d19', strokeWidth: 1.5 }}
                   tick={false}
                   tickLine={false}
                   width={20}
                 />
                 <Tooltip
                   formatter={(value) => [`${value} units`, 'Usage']}
-                  cursor={{ fill: 'rgba(0,0,0,0.03)' }}
+                  cursor={{ fill: 'rgba(33,29,25,0.04)' }}
                 />
-                <Bar dataKey="usage" fill="#0f4c5c" maxBarSize={70}>
+                <Bar dataKey="usage" fill="#211d19" maxBarSize={70}>
                   <LabelList
                     dataKey="usage"
                     position="top"
                     formatter={(v) => (v > 0 ? `${v}` : '')}
                     fontSize={12}
-                    fill="#0f4c5c"
+                    fill="#211d19"
                     fontWeight={700}
                   />
                 </Bar>
@@ -84,7 +103,7 @@ const COLORS = ['#0f4c5c', '#14b8a6', '#5eead4', '#f59e0b', '#ef4444', '#8b5cf6'
 
         <div className="dash-section">
           <div className="dash-section-head">
-            <h2>Bill Status Breakdown</h2>
+            <h2>Bill status</h2>
           </div>
 
           {billStatusChart.length === 0 ? (
