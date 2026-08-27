@@ -972,3 +972,241 @@
     flex-direction: column;
   }
 }
+
+/* =========================================================
+   TOP RIGHT PROFILE AVATAR
+========================================================= */
+
+.app-avatar-button {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* =========================================================
+   AVATAR CIRCLE
+========================================================= */
+
+.app-avatar {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  max-width: 42px;
+  max-height: 42px;
+
+  border-radius: 50%;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #b53b0d;
+
+  color: white;
+
+  font-weight: 700;
+
+  position: relative;
+
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   PROFILE IMAGE
+========================================================= */
+
+.app-avatar-image {
+  width: 100% !important;
+  height: 100% !important;
+
+  max-width: 100%;
+  max-height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+}
+
+
+/* =========================================================
+   FALLBACK LETTER
+========================================================= */
+
+.app-avatar-initial {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 17px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   REMOVE BUTTON DEFAULT STYLING
+========================================================= */
+
+.app-avatar-button:hover .app-avatar {
+  transform: scale(1.04);
+}
+
+
+/* =========================================================
+   PROFILE LARGE IMAGE
+========================================================= */
+
+.profile-avatar-lg {
+  width: 88px;
+  height: 88px;
+
+  min-width: 88px;
+  min-height: 88px;
+
+  max-width: 88px;
+  max-height: 88px;
+
+  border-radius: 50%;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  background: #b53b0d;
+
+  color: white;
+
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.app-avatar-button {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 50%;
+}
+
+.app-avatar-button:hover {
+  transform: scale(1.04);
+}
+
+/* =========================================
+   PROFILE AVATAR
+========================================= */
+
+.app-avatar-button {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+
+  padding: 0;
+  margin: 0;
+
+  border: 0;
+  outline: none;
+
+  background: transparent;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.app-avatar-button:hover {
+  transform: scale(1.06);
+}
+
+.app-avatar-button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* LETTER AVATAR */
+
+.app-avatar {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #0ea5e9
+  );
+
+  color: white;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  user-select: none;
+}
+
+/* PROFILE IMAGE */
+
+.app-avatar-image {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  display: block;
+
+  object-fit: cover;
+
+  object-position: center;
+
+  background: #e5e7eb;
+}

@@ -1,13 +1,28 @@
 import api from './apiClient';
 
-export const getMyProfile = () =>
-  api.get('/profiles/me');
+/* =========================================================
+   GET MY PROFILE
+========================================================= */
 
-export const updateMyProfile = data =>
-  api.put('/profiles/me', data);
+export const getMyProfile = () => {
+  return api.get('/profiles/me');
+};
 
-export const uploadProfilePhoto = file => {
+/* =========================================================
+   UPDATE MY PROFILE
+========================================================= */
+
+export const updateMyProfile = (data) => {
+  return api.put('/profiles/me', data);
+};
+
+/* =========================================================
+   UPLOAD PROFILE PHOTO
+========================================================= */
+
+export const uploadProfilePhoto = (file) => {
   const formData = new FormData();
+
   formData.append('photo', file);
 
   return api.post(
@@ -15,11 +30,29 @@ export const uploadProfilePhoto = file => {
     formData,
     {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'multipart/form-data',
+      },
     }
   );
 };
 
-export const getProfilePhotoUrl = () =>
-  `${api.defaults.baseURL}/profiles/me/photo`;
+/* =========================================================
+   GET PROFILE PHOTO
+========================================================= */
+
+export const getProfilePhoto = () => {
+  return api.get(
+    '/profiles/me/photo',
+    {
+      responseType: 'blob',
+    }
+  );
+};
+
+/* =========================================================
+   PROFILE PHOTO URL
+========================================================= */
+
+export const getProfilePhotoUrl = () => {
+  return `${api.defaults.baseURL}/profiles/me/photo`;
+};

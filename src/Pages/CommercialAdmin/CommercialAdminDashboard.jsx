@@ -12,6 +12,8 @@ import {
   markBillAsPaid
 } from "../../Api/commercialApi";
 
+import ProfileTab from '../../components/ProfileTab';
+
 import OverviewTab from "./tabs/OverviewTab";
 import HouseholdsTab from "./tabs/HouseholdsTab";
 import ResidentsTab from "./tabs/ResidentsTab";
@@ -36,7 +38,8 @@ const TABS = [
   'Generate Bill',
   'Bulk Purchases',
   'Complaints',
-  'Notifications'
+  'Notifications',
+  'Profile'
 ];
 
 
@@ -525,6 +528,9 @@ export default function CommercialAdminDashboard() {
 
           </>
         ) : null}
+        {activeTab === 'Profile' && (
+  <ProfileTab roleLabel="Community Admin" />
+)}
     </AppShell>
   );
 }

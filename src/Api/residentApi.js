@@ -1,122 +1,76 @@
 import api from './apiClient';
 
-// =========================================================
 // RESIDENT DATA
-// =========================================================
+export const getMyUsageHistory = id =>
+  api.get(`/usage-logs/household/${id}`);
 
-export const getMyUsageHistory = householdId =>
-  api.get(`/usage-logs/household/${householdId}`);
+export const getMyBills = id =>
+  api.get(`/bills/household/${id}`);
 
-export const getMyBills = householdId =>
-  api.get(`/bills/household/${householdId}`);
+export const getMyAlerts = id =>
+  api.get(`/alerts/household/${id}`);
 
-export const getMyAlerts = householdId =>
-  api.get(`/alerts/household/${householdId}`);
+export const getMyNotifications = id =>
+  api.get(`/notifications/household/${id}`);
 
-export const getMyNotifications = householdId =>
-  api.get(`/notifications/household/${householdId}`);
+export const getMyComplaints = id =>
+  api.get(`/complaints/household/${id}`);
 
-export const getMyComplaints = householdId =>
-  api.get(`/complaints/household/${householdId}`);
+export const getMyPayments = id =>
+  api.get(`/bills/payments/household/${id}`);
 
-export const getMyPayments = householdId =>
-  api.get(`/bills/payments/household/${householdId}`);
-
-// =========================================================
 // PAYMENTS
-// =========================================================
-
-export const createPaymentOrder = billId =>
-  api.post(`/payments/create-order/${billId}`);
+export const createPaymentOrder = id =>
+  api.post(`/payments/create-order/${id}`);
 
 export const verifyPayment = data =>
   api.post('/payments/verify', data);
 
-// =========================================================
 // BILL DOWNLOAD
-// =========================================================
-
-export const downloadInvoice = billId =>
-  api.get(`/bills/${billId}/invoice`, {
+export const downloadInvoice = id =>
+  api.get(`/bills/${id}/invoice`, {
     responseType: 'blob'
   });
 
-export const downloadCurrentBill = billId =>
-  api.get(`/bills/${billId}/invoice`, {
+export const downloadCurrentBill = id =>
+  api.get(`/bills/${id}/invoice`, {
     responseType: 'blob'
   });
 
-export const downloadPaidBill = billId =>
-  api.get(`/bills/${billId}/paid-invoice`, {
+export const downloadPaidBill = id =>
+  api.get(`/bills/${id}/paid-invoice`, {
     responseType: 'blob'
   });
 
-export const downloadAllCurrentBills = (
-  householdId,
-  year,
-  month
-) =>
-  api.get(
-    `/bills/household/${householdId}/current-pdf`,
-    {
-      params: {
-        year,
-        month
-      },
-      responseType: 'blob'
-    }
-  );
+export const downloadAllCurrentBills = (id, year, month) =>
+  api.get(`/bills/household/${id}/current-pdf`, {
+    params: { year, month },
+    responseType: 'blob'
+  });
 
-export const downloadAllPaidBills = (
-  householdId,
-  year,
-  month
-) =>
-  api.get(
-    `/bills/household/${householdId}/history-pdf`,
-    {
-      params: {
-        year,
-        month
-      },
-      responseType: 'blob'
-    }
-  );
+export const downloadAllPaidBills = (id, year, month) =>
+  api.get(`/bills/household/${id}/history-pdf`, {
+    params: { year, month },
+    responseType: 'blob'
+  });
 
-// =========================================================
 // PROFILE
-// =========================================================
-
 export const getMyProfile = () =>
-  api.get('/users/profile/me');
+  api.get('/profiles/me');
 
 export const updateMyProfile = data =>
-  api.put(
-    '/users/profile/update',
-    data
-  );
+  api.put('/profiles/me', data);
 
 export const uploadProfilePhoto = file => {
-
   const formData = new FormData();
+  formData.append('photo', file);
 
-  formData.append(
-    'photo',
-    file
-  );
-
-  return api.post(
-    '/users/profile/photo',
-    formData,
-    {
-      headers: {
-        'Content-Type':
-          'multipart/form-data'
-      }
+  return api.post('/profiles/me/photo', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
     }
-  );
+  });
 };
 
 export const getProfilePhotoUrl = () =>
-  `${api.defaults.baseURL}/users/profile/photo`;
-
+  `${api.defaults.baseURL}/profiles/me/photo`;

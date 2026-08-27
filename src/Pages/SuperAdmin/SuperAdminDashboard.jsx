@@ -20,6 +20,8 @@ import {
   getAllComplaints
 } from '../../Api/analyticsApi';
 
+import ProfileTab from '../../components/ProfileTab';
+
 import TrashTab from '../TrashTab';
 import AppShell from '../../components/app/AppShell';
 
@@ -49,7 +51,8 @@ const TABS = [
   'Commercial Admins',
   'Residents',
   'Settings',
-  'Trash'
+  'Trash',
+   'Profile'
 ];
 
 export default function SuperAdminDashboard() {
@@ -427,6 +430,10 @@ export default function SuperAdminDashboard() {
 
             {/* TRASH */}
            {activeTab === 'Trash' && <TrashTab />}
+
+           {activeTab === 'Profile' && (
+                <ProfileTab roleLabel="Super Admin" />
+              )}
 
           </>
     </AppShell>

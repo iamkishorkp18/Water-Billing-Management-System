@@ -6,7 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import SuperAdminDashboard from "./pages/Superadmin/SuperAdminDashboard";
 import CommercialAdminDashboard from "./pages/CommercialAdmin/CommercialAdminDashboard";
-import ResidentDashboard from "./pages/Resident/ResidentDashboard";
+import  ResidentDashboard  from "./pages/Resident/ResidentDashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PayBill from "./pages/PayBill";
 
