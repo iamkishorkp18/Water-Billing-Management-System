@@ -306,44 +306,32 @@ function BillingCycleTab({ bills, setBills }) {
   // SUMMARY
   // =========================================================
 
-  const summary = useMemo(() => {
+ const summary = useMemo(() => {
+  let total = 0;
+  let paid = 0;
+  let pending = 0;
+  let overdue = 0;
 
-    let total = 0;
-    let paid = 0;
-    let pending = 0;
-    let overdue = 0;
+  bills.forEach(bill => {
+    // ✅ force all amounts to positive
+    const amount = Math.abs(Number(bill.amount || 0));
+    total += amount;
 
-    bills.forEach(bill => {
+    if (String(bill.status || '').toUpperCase() === 'PAID') {
+      paid += amount;
+    } else {
+      pending += amount;
+    }
 
-      const amount =
-        Number(bill.amount || 0);
+    // Example: mark overdue if dueDate < today
+    if (bill.dueDate && new Date(bill.dueDate) < new Date() && bill.status !== 'PAID') {
+      overdue += amount;
+    }
+  });
 
-      total += amount;
+  return { total, paid, pending, overdue };
+}, [bills]);
 
-      const status = getStatus(bill);
-
-      if (status === 'PAID') {
-        paid++;
-      }
-
-      if (status === 'PENDING') {
-        pending++;
-      }
-
-      if (status === 'OVERDUE') {
-        overdue++;
-      }
-
-    });
-
-    return {
-      total,
-      paid,
-      pending,
-      overdue
-    };
-
-  }, [bills]);
 
 
   return (

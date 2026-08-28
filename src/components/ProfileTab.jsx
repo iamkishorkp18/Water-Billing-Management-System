@@ -7,7 +7,10 @@ import {
   getProfilePhoto,
 } from '../Api/profileApi';
 
-export default function ProfileTab({ roleLabel = 'User' }) {
+export default function ProfileTab({
+  roleLabel = 'User',
+  onPhotoUpdated,
+}) {
   const [profile, setProfile] = useState(null);
   const [editing, setEditing] = useState(false);
   const [photo, setPhoto] = useState(null);
@@ -23,9 +26,13 @@ export default function ProfileTab({ roleLabel = 'User' }) {
     loadPhoto();
 
     return () => {
-      if (photoUrl) {
-        URL.revokeObjectURL(photoUrl);
-      }
+      setPhotoUrl((oldUrl) => {
+        if (oldUrl) {
+          URL.revokeObjectURL(oldUrl);
+        }
+
+        return null;
+      });
     };
   }, []);
 
@@ -36,6 +43,7 @@ export default function ProfileTab({ roleLabel = 'User' }) {
   const loadProfile = async () => {
     try {
       const response = await getMyProfile();
+
       setProfile(response.data);
     } catch (error) {
       console.error('Profile load failed:', error);
@@ -50,11 +58,20 @@ export default function ProfileTab({ roleLabel = 'User' }) {
     try {
       const response = await getProfilePhoto();
 
-      if (!response.data || response.data.size === 0) {
+      if (!response?.data) {
         return;
       }
 
-      const url = URL.createObjectURL(response.data);
+      const blob =
+        response.data instanceof Blob
+          ? response.data
+          : new Blob([response.data]);
+
+      if (blob.size === 0) {
+        return;
+      }
+
+      const url = URL.createObjectURL(blob);
 
       setPhotoUrl((oldUrl) => {
         if (oldUrl) {
@@ -64,7 +81,6 @@ export default function ProfileTab({ roleLabel = 'User' }) {
         return url;
       });
     } catch (error) {
-      // 404 means the user has no profile photo
       if (error.response?.status !== 404) {
         console.error('Photo load failed:', error);
       }
@@ -117,7 +133,13 @@ export default function ProfileTab({ roleLabel = 'User' }) {
 
         setPhoto(null);
 
+        // Reload photo in ProfileTab
         await loadPhoto();
+
+        // Tell parent dashboard to reload header photo
+        if (onPhotoUpdated) {
+          await onPhotoUpdated();
+        }
       }
 
       // -----------------------------------------------------
@@ -182,6 +204,7 @@ export default function ProfileTab({ roleLabel = 'User' }) {
     profile.user?.role ||
     roleLabel.toUpperCase();
 
+  // Default first letter
   const initial =
     profile.fullName?.charAt(0)?.toUpperCase() ||
     roleLabel?.charAt(0)?.toUpperCase() ||
@@ -211,6 +234,7 @@ export default function ProfileTab({ roleLabel = 'User' }) {
                 height: '100%',
                 objectFit: 'cover',
                 borderRadius: '50%',
+                display: 'block',
               }}
             />
           ) : (
@@ -470,6 +494,7 @@ export default function ProfileTab({ roleLabel = 'User' }) {
       <div className="profile-actions">
 
         {!editing ? (
+
           <button
             type="button"
             className="btn btn-fill"
@@ -477,7 +502,9 @@ export default function ProfileTab({ roleLabel = 'User' }) {
           >
             ✏️ Edit Profile
           </button>
+
         ) : (
+
           <>
             <button
               type="button"
@@ -499,6 +526,7 @@ export default function ProfileTab({ roleLabel = 'User' }) {
               Cancel
             </button>
           </>
+
         )}
 
       </div>

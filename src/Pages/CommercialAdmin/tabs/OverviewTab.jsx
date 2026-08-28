@@ -15,13 +15,20 @@ import {
   LabelList
 } from 'recharts';
 
-
-
-
 function OverviewTab({
-  households, residents, bills, pendingCount,
-  pendingAmount, paidAmount, openComplaints, setActiveTab
+  households, residents, bills, openComplaints, setActiveTab
 }) {
+  // ✅ Calculate pending and paid amounts here
+  const pendingCount = bills.filter(b => b.status !== 'PAID').length;
+
+  const pendingAmount = bills
+    .filter(b => b.status !== 'PAID')
+    .reduce((sum, b) => sum + Number(b.amount || 0), 0);
+
+  const paidAmount = bills
+    .filter(b => b.status === 'PAID')
+    .reduce((sum, b) => sum + Number(b.amount || 0), 0);
+
   const billStatusData = [
     { name: 'Paid', value: bills.filter(b => b.status === 'PAID').length },
     { name: 'Pending', value: bills.filter(b => b.status !== 'PAID').length }
@@ -37,7 +44,6 @@ function OverviewTab({
   }));
 
   const revenueTrend = {};
-
   bills.forEach(b => {
     if (!revenueTrend[b.billingMonth]) {
       revenueTrend[b.billingMonth] = {
@@ -45,7 +51,6 @@ function OverviewTab({
         revenue: 0
       };
     }
-
     if (b.status === 'PAID') {
       revenueTrend[b.billingMonth].revenue += Number(b.amount || 0);
     }
@@ -167,6 +172,8 @@ function OverviewTab({
       </div>
     </>
   );
+  console.log("Paid bills:", bills.filter(b => String(b.status || '').toUpperCase() === 'PAID'));
+
 }
 
 export default OverviewTab;

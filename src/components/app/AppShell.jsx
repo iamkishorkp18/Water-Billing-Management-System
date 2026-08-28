@@ -85,12 +85,15 @@ export default function AppShell({
   const [open, setOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  const initials = email
-    ? email.charAt(0).toUpperCase()
-    : 'U';
+  // =========================================================
+  // DEFAULT INITIAL
+  // =========================================================
+
+  const initials =
+    email?.charAt(0)?.toUpperCase() || 'U';
 
   // =========================================================
-  // RESET IMAGE ERROR WHEN PHOTO CHANGES
+  // RESET IMAGE ERROR WHEN PHOTO URL CHANGES
   // =========================================================
 
   useEffect(() => {
@@ -291,7 +294,9 @@ export default function AppShell({
               {roleLabel}
             </span>
 
-            {/* PROFILE AVATAR */}
+            {/* =================================================
+                PROFILE AVATAR
+            ================================================= */}
 
             <button
               type="button"
@@ -302,16 +307,21 @@ export default function AppShell({
             >
 
               {profilePhotoUrl && !imageError ? (
+
                 <img
                   src={profilePhotoUrl}
                   alt="Profile"
                   className="app-avatar-image"
                   onError={() => setImageError(true)}
                 />
+
               ) : (
+
+                // DEFAULT S / INITIAL
                 <span className="app-avatar">
                   {initials}
                 </span>
+
               )}
 
             </button>

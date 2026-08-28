@@ -9,26 +9,24 @@ import {
   getComplaintsForApartment,
   createComplaint,
   updateComplaintStatus,
-  markBillAsPaid
-} from "../../Api/commercialApi";
+  markBillAsPaid,
+} from '../../Api/commercialApi';
 
 import ProfileTab from '../../components/ProfileTab';
+import {
+  getProfilePhoto,
+} from '../../Api/profileApi';
 
-import OverviewTab from "./tabs/OverviewTab";
-import HouseholdsTab from "./tabs/HouseholdsTab";
-import ResidentsTab from "./tabs/ResidentsTab";
-import BillingCycleTab from "./tabs/BillingCycleTab";
-import GenerateBillTab from "./tabs/GenerateBillTab";
-import ComplaintsTab from "./tabs/ComplaintsTab";
-import NotificationsTab from "./tabs/NotificationsTab";
+import OverviewTab from './tabs/OverviewTab';
+import HouseholdsTab from './tabs/HouseholdsTab';
+import ResidentsTab from './tabs/ResidentsTab';
+import BillingCycleTab from './tabs/BillingCycleTab';
+import GenerateBillTab from './tabs/GenerateBillTab';
+import ComplaintsTab from './tabs/ComplaintsTab';
+import NotificationsTab from './tabs/NotificationsTab';
 
-
-// ================= EXISTING BULK PURCHASE COMPONENT =================
-import BulkPurchasesTab from "../../components/BulkPurchasesTab";
-import AppShell from "../../components/app/AppShell";
-
-
-// ================= TABS =================
+import BulkPurchasesTab from '../../components/BulkPurchasesTab';
+import AppShell from '../../components/app/AppShell';
 
 const TABS = [
   'Overview',
@@ -39,86 +37,183 @@ const TABS = [
   'Bulk Purchases',
   'Complaints',
   'Notifications',
-  'Profile'
+  'Profile',
 ];
-
-
-// ================= MAIN DASHBOARD =================
 
 export default function CommercialAdminDashboard() {
   const navigate = useNavigate();
 
   const email = localStorage.getItem('email');
 
+  const [activeTab, setActiveTab] =
+    useState('Overview');
 
-  // ================= STATE =================
+  const [apartments, setApartments] =
+    useState([]);
 
-  const [activeTab, setActiveTab] = useState('Overview');
+  const [selectedApt, setSelectedApt] =
+    useState(null);
 
-  const [apartments, setApartments] = useState([]);
+  const [households, setHouseholds] =
+    useState([]);
 
-  const [selectedApt, setSelectedApt] = useState(null);
+  const [residents, setResidents] =
+    useState([]);
 
-  const [households, setHouseholds] = useState([]);
+  const [bills, setBills] =
+    useState([]);
 
-  const [residents, setResidents] = useState([]);
+  const [complaints, setComplaints] =
+    useState([]);
 
-  const [bills, setBills] = useState([]);
+  const [loading, setLoading] =
+    useState(true);
 
-  const [complaints, setComplaints] = useState([]);
+  const [error, setError] =
+    useState('');
 
-  const [loading, setLoading] = useState(true);
+  const [profilePhotoUrl, setProfilePhotoUrl] =
+    useState(null);
 
-  const [error, setError] = useState('');
+  /* =========================================================
+     PROFILE PHOTO
+  ========================================================= */
 
+  const loadProfilePhoto = async () => {
+    try {
+      const response =
+        await getProfilePhoto();
 
-  // ================= LOAD APARTMENTS =================
+      if (!response?.data) {
+        setProfilePhotoUrl(null);
+        return;
+      }
+
+      const blob =
+        response.data instanceof Blob
+          ? response.data
+          : new Blob([response.data]);
+
+      if (blob.size === 0) {
+        setProfilePhotoUrl(null);
+        return;
+      }
+
+      const newUrl =
+        URL.createObjectURL(blob);
+
+      setProfilePhotoUrl((oldUrl) => {
+        if (oldUrl) {
+          URL.revokeObjectURL(oldUrl);
+        }
+
+        return newUrl;
+      });
+    } catch (err) {
+      if (err.response?.status === 404) {
+        setProfilePhotoUrl(null);
+        return;
+      }
+
+      console.error(
+        'Profile photo load failed:',
+        err
+      );
+    }
+  };
+
+  useEffect(() => {
+    loadProfilePhoto();
+
+    return () => {
+      setProfilePhotoUrl((oldUrl) => {
+        if (oldUrl) {
+          URL.revokeObjectURL(oldUrl);
+        }
+
+        return null;
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'Profile') {
+      loadProfilePhoto();
+    }
+  }, [activeTab]);
+
+  const handleProfileClick = () => {
+    setActiveTab('Profile');
+  };
+
+  const handleProfilePhotoUpdated = () => {
+    loadProfilePhoto();
+  };
+
+  /* =========================================================
+     LOAD APARTMENTS
+  ========================================================= */
 
   useEffect(() => {
     loadApartments();
   }, []);
 
-
-  // ================= LOAD APARTMENT DATA =================
-
-  useEffect(() => {
-    if (selectedApt) {
-      loadApartmentData(selectedApt);
-    }
-  }, [selectedApt]);
-
-
-  // ================= GET APARTMENTS =================
-
   const loadApartments = async () => {
     setLoading(true);
+    setError('');
 
     try {
-      const res = await getMyApartments();
+      const response =
+        await getMyApartments();
 
-      setApartments(res.data);
+      const apartmentData =
+        Array.isArray(response?.data)
+          ? response.data
+          : [];
 
-      if (res.data.length) {
-        setSelectedApt(res.data[0].id);
+      setApartments(apartmentData);
+
+      if (apartmentData.length > 0) {
+        setSelectedApt(
+          apartmentData[0].id
+        );
       } else {
+        setSelectedApt(null);
         setLoading(false);
       }
-
     } catch (err) {
-      console.error('Failed to load apartments:', err);
+      console.error(
+        'Failed to load apartments:',
+        err
+      );
+
+      setApartments([]);
+      setSelectedApt(null);
 
       setError(
-        'Failed to load apartments. Your session may have expired.'
+        err.response?.data?.message ||
+          'Failed to load apartments. Your session may have expired.'
       );
 
       setLoading(false);
     }
   };
 
+  /* =========================================================
+     LOAD SELECTED APARTMENT DATA
+  ========================================================= */
 
-  // ================= LOAD SELECTED APARTMENT DATA =================
+  useEffect(() => {
+    if (selectedApt !== null) {
+      loadApartmentData(selectedApt);
+    }
+  }, [selectedApt]);
 
-  const loadApartmentData = async id => {
+  const loadApartmentData = async (id) => {
+    if (!id) {
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -127,187 +222,254 @@ export default function CommercialAdminDashboard() {
         householdsResponse,
         residentsResponse,
         billsResponse,
-        complaintsResponse
+        complaintsResponse,
       ] = await Promise.all([
-        getHouseholdsByApartment(id),
-        getResidentsForApartment(id),
-        getBillsForApartment(id),
-        getComplaintsForApartment(id).catch(() => ({
-          data: []
-        }))
+        getHouseholdsByApartment(id).catch(
+          () => ({ data: [] })
+        ),
+
+        getResidentsForApartment(id).catch(
+          () => ({ data: [] })
+        ),
+
+        getBillsForApartment(id).catch(
+          () => ({ data: [] })
+        ),
+
+        getComplaintsForApartment(id).catch(
+          () => ({ data: [] })
+        ),
       ]);
 
+      setHouseholds(
+        Array.isArray(
+          householdsResponse?.data
+        )
+          ? householdsResponse.data
+          : []
+      );
 
-      setHouseholds(householdsResponse.data);
+      setResidents(
+        Array.isArray(
+          residentsResponse?.data
+        )
+          ? residentsResponse.data
+          : []
+      );
 
-      setResidents(residentsResponse.data);
+      setBills(
+        Array.isArray(
+          billsResponse?.data
+        )
+          ? billsResponse.data
+          : []
+      );
 
-      setBills(billsResponse.data);
-
-      setComplaints(complaintsResponse.data);
-
+      setComplaints(
+        Array.isArray(
+          complaintsResponse?.data
+        )
+          ? complaintsResponse.data
+          : []
+      );
     } catch (err) {
-      console.error('Failed to load apartment data:', err);
+      console.error(
+        'Failed to load apartment data:',
+        err
+      );
 
-      setError('Failed to load apartment data.');
+      setHouseholds([]);
+      setResidents([]);
+      setBills([]);
+      setComplaints([]);
 
+      setError(
+        'Failed to load apartment data.'
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  /* =========================================================
+     SUBMIT COMPLAINT
+  ========================================================= */
 
-  // ================= COMMERCIAL ADMIN -> SUPER ADMIN =================
+  const handleSubmitComplaint =
+    async (data) => {
+      try {
+        const complaintData = {
+          createdBy:
+            localStorage.getItem('email'),
 
-  const handleSubmitComplaint = async data => {
+          createdByRole:
+            'COMMERCIAL_ADMIN',
+
+          complaintType:
+            data.complaintType,
+
+          description:
+            data.description,
+        };
+
+        await createComplaint(
+          complaintData
+        );
+
+        return true;
+      } catch (err) {
+        console.error(
+          'Complaint submission failed:',
+          err
+        );
+
+        console.error(
+          'Backend response:',
+          err.response?.data
+        );
+
+        throw err;
+      }
+    };
+
+  /* =========================================================
+     RESOLVE COMPLAINT
+  ========================================================= */
+
+  const handleResolveComplaint =
+    async (id) => {
+      try {
+        await updateComplaintStatus(
+          id,
+          'RESOLVED'
+        );
+
+        setComplaints((prev) =>
+          prev.map((complaint) =>
+            complaint.id === id
+              ? {
+                  ...complaint,
+                  status: 'RESOLVED',
+                }
+              : complaint
+          )
+        );
+      } catch (err) {
+        alert(
+          err.response?.data?.message ||
+            'Failed to update complaint.'
+        );
+      }
+    };
+
+  /* =========================================================
+     MARK BILL PAID
+  ========================================================= */
+
+  const handleMarkPaid = async (id) => {
     try {
-
-      const complaintData = {
-        createdBy: localStorage.getItem('email'),
-        createdByRole: 'COMMERCIAL_ADMIN',
-        complaintType: data.complaintType,
-        description: data.description
-      };
-
-
-      console.log(
-        'Commercial complaint:',
-        complaintData
-      );
-
-
-      await createComplaint(complaintData);
-
-      return true;
-
-    } catch (err) {
-
-      console.error(
-        'Complaint submission failed:',
-        err
-      );
-
-      console.error(
-        'Backend response:',
-        err.response?.data
-      );
-
-      throw err;
-    }
-  };
-
-
-  // ================= RESOLVE COMPLAINT =================
-
-  const handleResolveComplaint = async id => {
-    try {
-
-      await updateComplaintStatus(
-        id,
-        'RESOLVED'
-      );
-
-
-      setComplaints(prev =>
-        prev.map(c =>
-          c.id === id
-            ? {
-                ...c,
-                status: 'RESOLVED'
-              }
-            : c
-        )
-      );
-
-    } catch (err) {
-
-      alert(
-        err.response?.data?.message ||
-        'Failed to update complaint.'
-      );
-    }
-  };
-
-
-  // ================= MARK BILL PAID =================
-
-  const handleMarkPaid = async id => {
-    try {
-
       await markBillAsPaid(id);
 
-
-      setBills(prev =>
-        prev.map(b =>
-          b.id === id
+      setBills((prev) =>
+        prev.map((bill) =>
+          bill.id === id
             ? {
-                ...b,
-                status: 'PAID'
+                ...bill,
+                status: 'PAID',
               }
-            : b
+            : bill
         )
       );
-
     } catch (err) {
-
       alert(
         err.response?.data?.message ||
-        'Failed to mark bill as paid.'
+          'Failed to mark bill as paid.'
       );
     }
   };
 
-
-  // ================= LOGOUT =================
+  /* =========================================================
+     LOGOUT
+  ========================================================= */
 
   const handleLogout = () => {
+    if (profilePhotoUrl) {
+      URL.revokeObjectURL(
+        profilePhotoUrl
+      );
+    }
 
     localStorage.clear();
 
     navigate('/login');
   };
 
+  /* =========================================================
+     CURRENT APARTMENT
+  ========================================================= */
 
-  // ================= CURRENT APARTMENT =================
+  const currentApt =
+    apartments.find(
+      (apt) =>
+        apt.id === selectedApt
+    );
 
-  const currentApt = apartments.find(
-    a => a.id === selectedApt
-  );
+  /* =========================================================
+     BILL CALCULATIONS
+  ========================================================= */
 
+  const pendingCount =
+    bills.filter(
+      (bill) =>
+        String(
+          bill.status || 'PENDING'
+        ).toUpperCase() !== 'PAID'
+    ).length;
 
-  // ================= BILL CALCULATIONS =================
+  const pendingAmount =
+    bills
+      .filter(
+        (bill) =>
+          String(
+            bill.status || 'PENDING'
+          ).toUpperCase() !== 'PAID'
+      )
+      .reduce(
+        (sum, bill) =>
+          sum +
+          Number(
+            bill.amount || 0
+          ),
+        0
+      );
 
-  const pendingCount = bills.filter(
-    b => b.status !== 'PAID'
-  ).length;
-
-
-  const pendingAmount = bills
-    .filter(b => b.status !== 'PAID')
+  const paidAmount =
+  bills
+    .filter(
+      (bill) =>
+        String(bill.status || '').toUpperCase() === 'PAID'
+    )
     .reduce(
-      (sum, b) =>
-        sum + Number(b.amount || 0),
+      (sum, bill) => sum + Number(bill.amount || 0),
       0
     );
 
 
-  const paidAmount = bills
-    .filter(b => b.status === 'PAID')
-    .reduce(
-      (sum, b) =>
-        sum + Number(b.amount || 0),
-      0
-    );
+  /* =========================================================
+     COMPLAINT CALCULATION
+  ========================================================= */
 
+  const openComplaints =
+    complaints.filter(
+      (complaint) =>
+        String(
+          complaint.status || ''
+        ).toUpperCase() === 'OPEN'
+    ).length;
 
-  // ================= COMPLAINT CALCULATION =================
-
-  const openComplaints = complaints.filter(
-    c => c.status === 'OPEN'
-  ).length;
-
-
-  // ================= RENDER =================
+  /* =========================================================
+     RENDER
+  ========================================================= */
 
   return (
     <AppShell
@@ -319,218 +481,176 @@ export default function CommercialAdminDashboard() {
       onLogout={handleLogout}
       error={error}
       loading={loading}
+      profilePhotoUrl={profilePhotoUrl}
+      onProfileClick={handleProfileClick}
       headerExtra={
-        apartments.length ? (
+        apartments.length > 0 ? (
           <select
             aria-label="Select apartment"
             value={selectedApt || ''}
-            onChange={e => setSelectedApt(Number(e.target.value))}
+            onChange={(event) =>
+              setSelectedApt(
+                Number(
+                  event.target.value
+                )
+              )
+            }
           >
-            {apartments.map(a => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
-            ))}
+            {apartments.map(
+              (apartment) => (
+                <option
+                  key={apartment.id}
+                  value={apartment.id}
+                >
+                  {apartment.name}
+                </option>
+              )
+            )}
           </select>
         ) : null
       }
     >
-        {apartments.length === 0 && !loading ? (
-          <p className="empty-state">
-            No apartments assigned to you yet. Contact the Super Admin.
-          </p>
-        ) : !loading ? (
-          <>
+      {apartments.length === 0 &&
+      !loading ? (
+        <p className="empty-state">
+          No apartments assigned to you
+          yet. Contact the Super Admin.
+        </p>
+      ) : !loading ? (
+        <>
+          {/* OVERVIEW */}
 
+          {activeTab === 'Overview' && (
+            <OverviewTab
+              households={households}
+              residents={residents}
+              bills={bills}
+              complaints={complaints}
+              pendingCount={pendingCount}
+              pendingAmount={pendingAmount}
+              paidAmount={paidAmount}
+              openComplaints={
+                openComplaints
+              }
+              setActiveTab={
+                setActiveTab
+              }
+            />
+          )}
 
-            {/* =================================================
-                OVERVIEW
-            ================================================= */}
+          {/* HOUSEHOLDS */}
 
-            {activeTab === 'Overview' && (
+          {activeTab === 'Households' && (
+            <HouseholdsTab
+              apartmentId={selectedApt}
+              households={households}
+              setHouseholds={
+                setHouseholds
+              }
+            />
+          )}
 
-              <OverviewTab
+          {/* RESIDENTS */}
 
-                households={households}
+          {activeTab === 'Residents' && (
+            <ResidentsTab
+              apartmentName={
+                currentApt?.name
+              }
+              households={households}
+              residents={residents}
+              setResidents={
+                setResidents
+              }
+            />
+          )}
 
-                residents={residents}
+          {/* BILLING */}
 
-                bills={bills}
+          {activeTab ===
+            'Billing Cycle' && (
+            <BillingCycleTab
+              bills={bills}
+              onMarkPaid={
+                handleMarkPaid
+              }
+              apartmentId={
+                selectedApt
+              }
+              setBills={setBills}
+            />
+          )}
 
-                complaints={complaints}
+          {/* GENERATE BILL */}
 
-                pendingCount={pendingCount}
-
-                pendingAmount={pendingAmount}
-
-                paidAmount={paidAmount}
-
-                openComplaints={openComplaints}
-
-                setActiveTab={setActiveTab}
-
-              />
-
-            )}
-
-
-            {/* =================================================
-                HOUSEHOLDS
-            ================================================= */}
-
-            {activeTab === 'Households' && (
-
-              <HouseholdsTab
-
-                apartmentId={selectedApt}
-
-                households={households}
-
-                setHouseholds={setHouseholds}
-
-              />
-
-            )}
-
-
-            {/* =================================================
-                RESIDENTS
-            ================================================= */}
-
-            {activeTab === 'Residents' && (
-
-              <ResidentsTab
-
-                apartmentName={
-                  currentApt?.name
-                }
-
-                households={households}
-
-                residents={residents}
-
-                setResidents={setResidents}
-
-              />
-
-            )}
-
-
-            {/* =================================================
-                BILLING CYCLE
-            ================================================= */}
-
-            {activeTab === 'Billing Cycle' && (
-
-              <BillingCycleTab
-
-                bills={bills}
-
-                onMarkPaid={
-                  handleMarkPaid
-                }
-
-                apartmentId={
+          {activeTab ===
+            'Generate Bill' && (
+            <GenerateBillTab
+              households={
+                households
+              }
+              onBillGenerated={() =>
+                loadApartmentData(
                   selectedApt
-                }
+                )
+              }
+            />
+          )}
 
-                setBills={
-                  setBills
-                }
+          {/* BULK PURCHASES */}
 
-              />
+          {activeTab ===
+            'Bulk Purchases' && (
+            <BulkPurchasesTab
+              apartmentId={
+                selectedApt
+              }
+            />
+          )}
 
-            )}
+          {/* COMPLAINTS */}
 
+          {activeTab ===
+            'Complaints' && (
+            <ComplaintsTab
+              complaints={
+                complaints
+              }
+              onResolve={
+                handleResolveComplaint
+              }
+              onSubmitComplaint={
+                handleSubmitComplaint
+              }
+            />
+          )}
 
-            {/* =================================================
-                GENERATE BILL
-            ================================================= */}
+          {/* NOTIFICATIONS */}
 
-            {activeTab === 'Generate Bill' && (
+          {activeTab ===
+            'Notifications' && (
+            <NotificationsTab
+              apartmentId={
+                selectedApt
+              }
+              households={
+                households
+              }
+            />
+          )}
+        </>
+      ) : null}
 
-              <GenerateBillTab
+      {/* PROFILE */}
 
-                households={
-                  households
-                }
-
-                onBillGenerated={() =>
-                  loadApartmentData(
-                    selectedApt
-                  )
-                }
-
-              />
-
-            )}
-
-
-            {/* =================================================
-                BULK PURCHASES
-            ================================================= */}
-
-            {activeTab === 'Bulk Purchases' && (
-
-              <BulkPurchasesTab
-                apartmentId={
-                  selectedApt
-                }
-              />
-
-            )}
-
-
-            {/* =================================================
-                COMPLAINTS
-            ================================================= */}
-
-            {activeTab === 'Complaints' && (
-
-              <ComplaintsTab
-
-                complaints={
-                  complaints
-                }
-
-                onResolve={
-                  handleResolveComplaint
-                }
-
-                onSubmitComplaint={
-                  handleSubmitComplaint
-                }
-
-              />
-
-            )}
-
-
-            {/* =================================================
-                NOTIFICATIONS
-            ================================================= */}
-
-            {activeTab === 'Notifications' && (
-
-              <NotificationsTab
-
-                apartmentId={
-                  selectedApt
-                }
-
-                households={
-                  households
-                }
-
-              />
-
-            )}
-
-          </>
-        ) : null}
-        {activeTab === 'Profile' && (
-  <ProfileTab roleLabel="Community Admin" />
-)}
+      {activeTab === 'Profile' && (
+        <ProfileTab
+          roleLabel="Community Admin"
+          onPhotoUpdated={
+            handleProfilePhotoUpdated
+          }
+        />
+      )}
     </AppShell>
   );
 }
