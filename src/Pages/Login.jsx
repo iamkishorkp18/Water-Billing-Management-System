@@ -138,6 +138,10 @@ export default function Login() {
           }
         />
 
+        <div className="pub-auth-note" style={{ textAlign: 'right', marginTop: -6, marginBottom: 18 }}>
+          <Link to="/forgot-password">Forgot password?</Link>
+        </div>
+
         <button
           type="submit"
           className="pub-btn pub-btn-primary pub-btn-block"

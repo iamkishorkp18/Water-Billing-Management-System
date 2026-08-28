@@ -47,4 +47,7 @@ export const getAssignmentsForUser = userId =>
 export const createAssignment = data =>
   api.post('/assignments', data);
 
+export const forgotPassword = (email) => api.post('/auth/forgot-password', { email });
+export const resetPassword = (token, newPassword) => api.post('/auth/reset-password', { token, newPassword });
+
 export default api;
