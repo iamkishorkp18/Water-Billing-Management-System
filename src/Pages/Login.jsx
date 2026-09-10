@@ -34,7 +34,12 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log(
+  'FRONTEND PASSWORD LENGTH:',
+  form.password.length,
+  'PASSWORD:',
+  form.password
+);
     setError('');
     setLoading(true);
 
