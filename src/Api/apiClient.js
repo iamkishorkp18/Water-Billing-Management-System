@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'https://water-billing-system-backend.onrender.com',
   headers: { 'Content-Type': 'application/json' }
 });
 
